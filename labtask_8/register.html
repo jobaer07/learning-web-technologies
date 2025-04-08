@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register with Email Verification</title>
+    <style>
+        .verification-step { display: none; }
+        .verification-step.active { display: block; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <form id="registrationForm">
+        <!-- Step 1: Registration -->
+        <div id="registerStep" class="verification-step active">
+            <h2>Create Account</h2>
+            <div>
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div>
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required minlength="8">
+            </div>
+            <div>
+                <label for="confirm-password">Confirm Password:</label>
+                <input type="password" id="confirm-password" required>
+                <span id="password-error" class="error"></span>
+            </div>
+            <button type="button" onclick="validateAndProceed()">Continue</button>
+            <div>
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+
+        <!-- Step 2: Verification -->
+        <div id="verificationStep" class="verification-step">
+            <h2>Verify Your Email</h2>
+            <p>We've sent a 6-digit code to <span id="display-email"></span></p>
+            <div>
+                <label for="verification-code">Verification Code:</label>
+                <input type="text" id="verification-code" pattern="\d{6}" title="6-digit code" required>
+                <span id="verification-error" class="error"></span>
+            </div>
+            <button type="button" onclick="verifyCode()">Verify Email</button>
+            <div>
+                Didn't receive code? <a href="#" onclick="resendCode()">Resend</a>
+            </div>
+        </div>
+
+        <!-- Step 3: Success -->
+        <div id="successStep" class="verification-step">
+            <h2>Registration Complete!</h2>
+            <p>Your email has been verified successfully.</p>
+            <a href="login.html">Proceed to Login</a>
+        </div>
+    </form>
+
+    <script>
+        // This would be handled by your backend in a real application
+        let generatedCode = "";
+        let userEmail = "";
+
+        function validateAndProceed() {
+            // Password matching validation
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm-password').value;
+            
+            if (password !== confirmPassword) {
+                document.getElementById('password-error').textContent = "Passwords don't match";
+                return;
+            }
+
+            // Generate random 6-digit code (simulating backend)
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+            userEmail = document.getElementById('email').value;
+            
+            // Display verification step
+            document.getElementById('display-email').textContent = userEmail;
+            document.getElementById('registerStep').classList.remove('active');
+            document.getElementById('verificationStep').classList.add('active');
+            
+            // In real app: Send email with this code via backend
+            console.log("Verification code for", userEmail, "is:", generatedCode);
+            alert(`DEMO: Verification code is ${generatedCode} (in real app this would be emailed)`);
+        }
+
+        function verifyCode() {
+            const enteredCode = document.getElementById('verification-code').value;
+            
+            if (enteredCode === generatedCode) {
+                document.getElementById('verificationStep').classList.remove('active');
+                document.getElementById('successStep').classList.add('active');
+                
+                // In real app: Submit form to backend here
+            } else {
+                document.getElementById('verification-error').textContent = "Invalid code";
+            }
+        }
+
+        function resendCode() {
+            // Generate new code
+            generatedCode = Math.floor(100000 + Math.random() * 900000).toString();
+            console.log("New verification code for", userEmail, "is:", generatedCode);
+            alert(`DEMO: New verification code is ${generatedCode}`);
+            document.getElementById('verification-error').textContent = "";
+            document.getElementById('verification-code').value = "";
+        }
+    </script>
+</body>
+</html>
